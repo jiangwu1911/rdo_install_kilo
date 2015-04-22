@@ -57,9 +57,6 @@ function install_openstack() {
         nic=`ifconfig | grep flags | grep -v lo: | awk -F: '{print $1}'`
     fi
 
-    sed -i "/  pidfilepath => .*/d" /usr/lib/python2.7/site-packages/packstack/puppet/templates/mongodb.pp
-    sed -i "s#config     => \$config_file,#config     => \$config_file,\n  pidfilepath => '/var/run/mongodb/mongodb.pid',#" /usr/lib/python2.7/site-packages/packstack/puppet/templates/mongodb.pp
-
     modify_answerfile CONFIG_NEUTRON_INSTALL n
     modify_answerfile CONFIG_SWIFT_INSTALL n
     modify_answerfile CONFIG_NAGIOS_INSTALL n
