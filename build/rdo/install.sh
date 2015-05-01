@@ -20,7 +20,7 @@ VLAN_START=101
 VLAN_NUM=10
 VMWARE_VLAN_INTERFACE=vmnic1
 
-#COMPUTE_HOSTS="192.168.206.131,192.168.206.132"
+COMPUTE_HOSTS="172.16.71.204"
 
 dt=`date '+%Y%m%d-%H%M%S'`
 logfile="install_$dt.log"
@@ -60,7 +60,7 @@ function install_openstack() {
     modify_answerfile CONFIG_NEUTRON_INSTALL n
     modify_answerfile CONFIG_SWIFT_INSTALL n
     modify_answerfile CONFIG_NAGIOS_INSTALL n
-    modify_answerfile CONFIG_CEILOMETER_INSTALL y
+    modify_answerfile CONFIG_CEILOMETER_INSTALL n
 
     if [ -n $COMPUTE_HOSTS ]; then
         modify_answerfile CONFIG_COMPUTE_HOSTS $COMPUTE_HOSTS
@@ -144,15 +144,15 @@ function post_install() {
     systemctl restart openstack-glance-registry
 
     # ceilometer
-    if [ "$HYPERVISOR" = "vmware" ]; then
-        openstack-config --set /etc/ceilometer/ceilometer.conf DEFAULT hypervisor_inspector vsphere
-        openstack-config --set /etc/ceilometer/ceilometer.conf vmware host_ip $VCENTER_HOST
-        openstack-config --set /etc/ceilometer/ceilometer.conf vmware host_username $VCENTER_USER
-        openstack-config --set /etc/ceilometer/ceilometer.conf vmware host_password $VCENTER_PASSWORD
-        systemctl restart openstack-ceilometer-central
-        systemctl restart openstack-ceilometer-collector
-        systemctl restart openstack-ceilometer-compute
-    fi
+    #if [ "$HYPERVISOR" = "vmware" ]; then
+    #    openstack-config --set /etc/ceilometer/ceilometer.conf DEFAULT hypervisor_inspector vsphere
+    #    openstack-config --set /etc/ceilometer/ceilometer.conf vmware host_ip $VCENTER_HOST
+    #    openstack-config --set /etc/ceilometer/ceilometer.conf vmware host_username $VCENTER_USER
+    #    openstack-config --set /etc/ceilometer/ceilometer.conf vmware host_password $VCENTER_PASSWORD
+    #    systemctl restart openstack-ceilometer-central
+    #    systemctl restart openstack-ceilometer-collector
+    #    systemctl restart openstack-ceilometer-compute
+    #fi
 
     # VMs can connect to internet
     iptables -t nat -I POSTROUTING -s $FIXED_IP_RANGE ! -d $FIXED_IP_RANGE -j MASQUERADE
